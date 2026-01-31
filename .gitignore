@@ -1,0 +1,37 @@
+# Build directories
+build/
+cmake-build-*/
+out/
+
+# IDE settings
+.vscode/
+.idea/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Binaries and Object files
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.obj
+*.exp
+
+# Output and temporary files
+jobs.json
+proxies.txt
+headers.json
+*.log
+*.tlog
+debug_*.html
+crash_log.txt
+to_do.txt
+run_command.txt
+
+# System
+thumbs.db
+.DS_Store
+locations.txt
