@@ -1,4 +1,4 @@
-# 🚀 C++ & n8n Automation Pipeline: Workflow-Steuerung mittels n8n und SMTP im Docker-Container
+# 🚀 C++ & n8n Automation Pipeline: Workflow Orchestration via n8n and SMTP in a Docker Container  
 
 This project is a deep-dive educational playground built to understand the mechanics of high-performance web scrapers, data pipelines, and modern automation ecosystems. It connects a low-level, multi-threaded C++ extraction engine with self-hosted n8n workflows inside a Dockerized environment.
 
@@ -35,63 +35,61 @@ Instead of relying on heavy framework abstractions, this project implements core
 
 ### Building the C++ Binary
 1. **Configure CMake**:
-   ```bash
+```bash
    cmake -B build -S .
+   ```
+2. **Compile Project**:
+```bash
+   cmake --build build --config Release
+   ```
 
-   Compile Project:
-
-Bash
-cmake --build build --config Release
-Running the Pipeline Stack
+### Running the Pipeline Stack
 To spin up the n8n environment and automation hooks, run:
-
-Bash
+```bash
 docker-compose up -d
-💻 Usage & Examples
+```
+
+## 💻 Usage & Examples
+
 Execute the binary directly from your shell to fetch data and feed the automation pipeline:
 
-Bash
+```bash
 ./build/Release/scraper.exe --sites all --location "Stuttgart" --keywords "C++,Linux" --output jobs.json --pages 5
-⚙️ Arguments CLI Reference
---sites: Target endpoints (e.g., indeed, stepstone, linkedin) or all.
+```
 
---location: Structural geo-filtering target.
+### ⚙️ Arguments CLI Reference
+- `--sites`: Target endpoints (e.g., `indeed`, `stepstone`, `linkedin`) or `all`.
+- `--location`: Structural geo-filtering target.
+- `--keywords`: Core search terms.
+- `--output`: Filepath for localized fallback storage (default: `jobs.json`).
+- `--threads`: Limit or scale worker threads.
+- `--pages`: Extraction depth limit per execution block.
+- `--deep`: Toggles second-level scanning to follow internal nodes and extract contact links.
+- `--webhook`: The target n8n automation link (`POST` request receiver).
+- `--proxies`: Path to file containing network proxies.
 
---keywords: Core search terms.
+### 💡 Example Scenarios
 
---output: Filepath for localized fallback storage (default: jobs.json).
-
---threads: Limit or scale worker threads.
-
---pages: Extraction depth limit per execution block.
-
---deep: Toggles second-level scanning to follow internal nodes and extract contact links.
-
---webhook: The target n8n automation link (POST request receiver).
-
---proxies: Path to file containing network proxies.
-
-💡 Example Scenarios
-Local Analysis Configuration:
-
-Bash
+**Local Analysis Configuration:**
+```bash
 ./build/Release/scraper.exe --sites all --location "Stuttgart" --pages 1
-Full Automation Run (Triggering n8n & SMTP):
+```
 
-Bash
+**Full Automation Run (Triggering n8n & SMTP):**
+```bash
 ./build/Release/scraper.exe --sites all --location "Stuttgart" --pages 1 --deep --webhook "http://localhost:5678/webhook/your-automation-id"
-🔧 Internal Configuration Layout
-proxies.txt: Supply network proxies using scheme://ip:port or ip:port:user:pass patterns.
+```
 
-headers.json: Custom HTTP configurations to study browser emulation behavior and header manipulation.
+## 🔧 Internal Configuration Layout
+- **proxies.txt**: Supply network proxies using `scheme://ip:port` or `ip:port:user:pass` patterns.
+- **headers.json**: Custom HTTP configurations to study browser emulation behavior and header manipulation.
 
-⚖️ Disclaimer & Educational Boundaries
-⚠️ STUDY PROJECT ONLY
+## ⚖️ Disclaimer & Educational Boundaries
 
-This repository was created exclusively for educational and scientific research purposes regarding network protocols, multi-threaded architecture patterns, and automation infrastructures. It is NOT intended for production environments, real-world data harvesting, or commercial deployment.
+**⚠️ STUDY PROJECT ONLY**
 
-Self-Contained Nature: Use this tool responsibly. It is designed to evaluate how automation pipelines handle high-throughput payloads.
+This repository was created exclusively for **educational and scientific research purposes** regarding network protocols, multi-threaded architecture patterns, and automation infrastructures. It is **NOT** intended for production environments, real-world data harvesting, or commercial deployment.
 
-Terms of Service: Web scraping can conflict with the Terms of Service (ToS) of major platforms. This tool is built to experiment with standard browser emulator techniques.
-
-Data Handling Compliance: If processing any contact data through the --deep flag, ensure compliance with localized data protection policies (e.g., GDPR/DSGVO). Never share or expose scraped logs publicly.
+1. **Self-Contained Nature**: Use this tool responsibly. It is designed to evaluate how automation pipelines handle high-throughput payloads.
+2. **Terms of Service**: Web scraping can conflict with the Terms of Service (ToS) of major platforms. This tool is built to experiment with standard browser emulator techniques.
+3. **Data Handling Compliance**: If processing any contact data through the `--deep` flag, ensure compliance with localized data protection policies (e.g., GDPR/DSGVO). Never share or expose scraped logs publicly.
