@@ -1,88 +1,97 @@
-# 📝 C++17 Job Aggregator (Research Project)
+# 🚀 C++ & n8n Automation Pipeline: Workflow-Steuerung mittels n8n und SMTP im Docker-Container
 
-High-performance, multi-threaded C++ application demonstrating modern networking, HTML parsing, and asynchronous system architecture.
+This project is a deep-dive educational playground built to understand the mechanics of high-performance web scrapers, data pipelines, and modern automation ecosystems. It connects a low-level, multi-threaded C++ extraction engine with self-hosted n8n workflows inside a Dockerized environment.
 
-> **Note for Recruiters/Reviewers:** This project was developed as an educational exploration of C++17 standards, multithreading (`std::thread`, `std::future`), and HTTP protocol implementation (`cpr`/`libcurl`). It showcases ability to handle complex system challenges like rate limiting, concurrency control, and data sanitization.
+Instead of relying on heavy framework abstractions, this project implements core networking concepts from scratch to explore rate-limiting, raw HTML parsing, and asynchronous event-driven automation.
 
-## ✨ Features
+## 🛠️ System Architecture & Workflow
 
-### 🛡️ Technical Highlights
-- **Consolidated Architecture**: Aggregates data from multiple sources (**LinkedIn**, **Indeed**, **StepStone**) into a unified data structure.
-- **Intelligent Pipeline**: Implements tokenization and strict location filtering (`locations.txt`) to ensure high data relevance.
-- **Data Integrity**: 
-  - **Deduplication algorithm**: Uses hash-based sets to eliminate redundant entries.
-  - **Transactional Saving**: Implements incremental IO flushing to ensure data persistence during long-running tasks.
+1. **C++ Engine**: Scrapes and normalizes raw data asynchronously across multiple targets.
+2. **Data Pipeline**: Sanitizes, tokenizes, and deduplicates payloads in-memory.
+3. **Webhook Bridge**: Serializes results into standard JSON and dispatches them via HTTP POST to an n8n endpoint.
+4. **n8n Automation**: Orchestrates the incoming payload, filters content, and triggers automated SMTP mail workflows inside an isolated Docker network.
 
-### ⚡ Advanced Networking
-- **Deep Extraction**: Asynchronous traversal of detail pages to parse metadata (e.g. contact info) via Regex/XPath.
-- **Webhook Integration (n8n)**: Automatically serializes and pushes results via POST requests to external automation workflows.
-- **Resilient Request System**: 
-  - Configurable proxy rotation middleware.
-  - Ethical rate-limiting implementation (Jitter/Backoff strategies).
-- **Concurrency**: Scalable thread-pool implementation for parallel processing.
+## ✨ Core Learning Objectives & Features
+
+### ⚡ Low-Level & Advanced Networking (C++)
+- **Conical Multithreading**: Scalable thread-pool implementation utilizing `std::thread` and `std::future` to master concurrency control and race-condition prevention.
+- **Resilient HTTP Client**: Built on top of `cpr`/`libcurl` featuring custom proxy rotation middleware and ethical jitter/backoff strategies to bypass basic anti-bot blocks.
+- **Deep DOM Parsing**: Utilizes Regex/XPath mapping to traverse nested detail views for granular metadata extraction (e.g., embedding contact info).
+
+### 🛡️ Data Engineering & Persistence
+- **Deduplication Matrix**: In-memory hash-sets preventing redundant entries before pipeline serialization.
+- **Transactional Streaming**: Incremental I/O flushing to maintain structured JSON integrity even during unexpected runtime interruptions.
+
+### 🤖 Automation & Containerization
+- **n8n Webhook Integration**: Native JSON payloads dispatched straight into webhooks for automated event-triggering.
+- **Dockerized Environment**: Fully containerized stack ensuring reproducible network routes between the scraping application, n8n instance, and SMTP relays.
 
 ## 📋 Prerequisites
 - CMake 3.14+
-- C++17 Compiler (MSVC, GCC, Clang)
-- Internet Connection
+- C++17 compliant compiler (GCC, Clang, MSVC)
+- Docker & Docker Compose (for the full automation stack)
 
-## 🛠️ Build Instructions
+## 🔨 Quick Start & Build Instructions
 
-1. **Configure**:
+### Building the C++ Binary
+1. **Configure CMake**:
    ```bash
    cmake -B build -S .
-   ```
 
-2. **Build**:
-   ```bash
-   cmake --build build --config Release
-   ```
+   Compile Project:
 
-## 💻 Usage
+Bash
+cmake --build build --config Release
+Running the Pipeline Stack
+To spin up the n8n environment and automation hooks, run:
 
-Run the scraper from the command line:
+Bash
+docker-compose up -d
+💻 Usage & Examples
+Execute the binary directly from your shell to fetch data and feed the automation pipeline:
 
-```bash
-./build/Release/scraper.exe --sites all --location "Stuttgart" --keywords "Fachinformatiker,C++" --output jobs.json --pages 5
-```
+Bash
+./build/Release/scraper.exe --sites all --location "Stuttgart" --keywords "C++,Linux" --output jobs.json --pages 5
+⚙️ Arguments CLI Reference
+--sites: Target endpoints (e.g., indeed, stepstone, linkedin) or all.
 
-### ⚙️ Arguments
-- `--sites`: Comma-separated sites (indeed, stepstone, linkedin) or 'all'.
-- `--location`: Target city or region.
-- `--keywords`: Search terms.
-- `--output`: Path to save JSON results (default: `jobs.json`).
-- `--threads`: Number of threads.
-- `--pages`: Number of pages to scrape per site.
-- `--deep`: **(New)** Enable deep scraping to visit job pages and extract emails.
-- `--webhook`: **(New)** URL to send the JSON result payload to (POST request).
-- `--proxies`: Path to proxy list (default: `proxies.txt`).
-- `--headers`: Path to header config (default: `headers.json`).
+--location: Structural geo-filtering target.
 
-### 💡 Examples
-**Standard Run:**
-```bash
+--keywords: Core search terms.
+
+--output: Filepath for localized fallback storage (default: jobs.json).
+
+--threads: Limit or scale worker threads.
+
+--pages: Extraction depth limit per execution block.
+
+--deep: Toggles second-level scanning to follow internal nodes and extract contact links.
+
+--webhook: The target n8n automation link (POST request receiver).
+
+--proxies: Path to file containing network proxies.
+
+💡 Example Scenarios
+Local Analysis Configuration:
+
+Bash
 ./build/Release/scraper.exe --sites all --location "Stuttgart" --pages 1
-```
+Full Automation Run (Triggering n8n & SMTP):
 
-**Deep Scan with n8n Integration:**
-```bash
-./build/Release/scraper.exe --sites all --location "Stuttgart" --pages 1 --deep --webhook "http://localhost:5678/webhook"
-```
+Bash
+./build/Release/scraper.exe --sites all --location "Stuttgart" --pages 1 --deep --webhook "http://localhost:5678/webhook/your-automation-id"
+🔧 Internal Configuration Layout
+proxies.txt: Supply network proxies using scheme://ip:port or ip:port:user:pass patterns.
 
-## 🔧 Configuration
-- **proxies.txt**: Add proxies in `scheme://ip:port` or `ip:port:user:pass` format (handled by cpr/curl).
-- **headers.json**: Modify user agents and referers to match your target demographic.
+headers.json: Custom HTTP configurations to study browser emulation behavior and header manipulation.
 
-## ⚖️ Legal Disclaimer & Terms of Use
+⚖️ Disclaimer & Educational Boundaries
+⚠️ STUDY PROJECT ONLY
 
-**⚠️ EDUCATIONAL PROJECT ONLY - PLEASE READ CAREFULLY**
+This repository was created exclusively for educational and scientific research purposes regarding network protocols, multi-threaded architecture patterns, and automation infrastructures. It is NOT intended for production environments, real-world data harvesting, or commercial deployment.
 
-This software is a **student project** created strictly for **educational and learning purposes** (researching C++, HTTP networking, and HTML parsing). It is **NOT** intended for commercial use, data mining, or mass scraping.
+Self-Contained Nature: Use this tool responsibly. It is designed to evaluate how automation pipelines handle high-throughput payloads.
 
-1.  **No Liability**: The author assumes no responsibility for any consequences arising from the use of this software. You use it entirely at your own risk.
-2.  **Respect `robots.txt`**: This tool technically ignores `robots.txt` to function as a browser emulator. By using this tool, you acknowledge that you are bypassing standard automated access controls.
-3.  **Terms of Service**: Scraping data may violate the Terms of Service (ToS) of the target platforms (LinkedIn, Indeed, StepStone). Use of this tool may lead to your IP address or account being blocked.
-4.  **GDPR/DSGVO Compliance**: If you extract personal data (like names or email addresses via `--deep`), you are responsible for handling this data in compliance with local data protection laws (e.g., GDPR in Europe). Do not publish or sell scraped data.
-5.  **Do Not Misuse**: Do not use this tool to spam, harass, or overload the servers of the target platforms.
+Terms of Service: Web scraping can conflict with the Terms of Service (ToS) of major platforms. This tool is built to experiment with standard browser emulator techniques.
 
-**By downloading or running this software, you agree to use it only for personal learning and testing.**
+Data Handling Compliance: If processing any contact data through the --deep flag, ensure compliance with localized data protection policies (e.g., GDPR/DSGVO). Never share or expose scraped logs publicly.
